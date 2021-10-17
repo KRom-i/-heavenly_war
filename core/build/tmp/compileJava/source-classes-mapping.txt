@@ -1,0 +1,2 @@
+stargame/gb/ru/StarGame.java
+ stargame.gb.ru.StarGame

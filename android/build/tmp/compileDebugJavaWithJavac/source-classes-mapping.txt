@@ -1,0 +1,10 @@
+stargame/gb/ru/AndroidLauncher.java
+ stargame.gb.ru.AndroidLauncher
+stargame/gb/ru/BuildConfig.java
+ stargame.gb.ru.BuildConfig
+stargame/gb/ru/R.java
+ stargame.gb.ru.R
+ stargame.gb.ru.R$color
+ stargame.gb.ru.R$drawable
+ stargame.gb.ru.R$string
+ stargame.gb.ru.R$style

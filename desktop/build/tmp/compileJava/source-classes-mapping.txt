@@ -1,0 +1,2 @@
+stargame/gb/ru/desktop/DesktopLauncher.java
+ stargame.gb.ru.desktop.DesktopLauncher

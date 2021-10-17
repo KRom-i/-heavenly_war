@@ -1,0 +1,4 @@
+#Mon Oct 18 01:44:21 MSK 2021
+base.0=C\:\\Users\\Public\\Documents\\Games\\StarGame\\android\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex
