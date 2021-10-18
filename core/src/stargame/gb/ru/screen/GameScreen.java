@@ -49,4 +49,15 @@ public class GameScreen extends BaseScreen {
 
         return super.touchDown(screenX, screenY, pointer, button);
     }
+    
+        @Override
+    public void hide() {
+        super.hide();
+        dispose();
+    }
+
+    @Override
+    public void dispose() {
+        userPlane.dispose();
+    }
 }
