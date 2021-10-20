@@ -1,5 +1,6 @@
 package stargame.gb.ru.base;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
@@ -16,6 +17,7 @@ public class BaseScreen implements Screen, InputProcessor {
     public void show() {
         batch = new SpriteBatch();
         backgroundImg = new Texture(backgroundImgFileName);
+        Gdx.input.setInputProcessor(this);
     }
 
     @Override
