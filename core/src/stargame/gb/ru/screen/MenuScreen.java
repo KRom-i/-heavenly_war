@@ -1,56 +1,65 @@
 package stargame.gb.ru.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+
+import java.util.List;
+
 import stargame.gb.ru.base.BaseScreen;
+import stargame.gb.ru.base.Sprite;
 import stargame.gb.ru.math.Rect;
 import stargame.gb.ru.sprite.Background;
+import stargame.gb.ru.sprite.ExitButton;
 import stargame.gb.ru.sprite.Logo;
+import stargame.gb.ru.sprite.PlayButton;
 
 public class MenuScreen extends BaseScreen {
 
     private Texture textureBackground;
-    private Texture textureLogo;
-
     private Background background;
-    private Logo logo;
+
+    private TextureAtlas atlas;
+    private ExitButton exit;
+    private PlayButton play;
+
+    private final Game game;
+
+    public MenuScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
         super.show();
         textureBackground = new Texture("textures/background_menu.jpg");
-        textureLogo = new Texture("textures/logo.png");
+        atlas = new TextureAtlas("textures/menuAtlas.pack");
         background = new Background(textureBackground);
-        logo = new Logo(textureLogo);
-    }
-
-    @Override
-    public void resize(Rect worldBounds) {
-        super.resize(worldBounds);
-        background.resize(worldBounds);
-        logo.resize(worldBounds);
-    }
-
-    @Override
-    public void render(float delta) {
-        ScreenUtils.clear(1, 0, 0, 1);
-        batch.begin();
-        background.draw(batch);
-        logo.draw(batch);
-        batch.end();
+        exit = new ExitButton(atlas);
+        play = new PlayButton(atlas, game);
+        addSprites(background, exit, play);
     }
 
     @Override
     public void dispose() {
         super.dispose();
         textureBackground.dispose();
-        textureLogo.dispose();
+        atlas.dispose();
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        logo.touchDown(touch, pointer, button);
+        exit.touchDown(touch, pointer, button);
+        play.touchDown(touch, pointer, button);
         return super.touchDown(touch, pointer, button);
+    }
+
+    @Override
+    public boolean touchUp(Vector2 touch, int pointer, int button) {
+        exit.touchUp(touch, pointer, button);
+        play.touchUp(touch, pointer, button);
+        return super.touchUp(touch, pointer, button);
     }
 }

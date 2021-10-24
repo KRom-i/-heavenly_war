@@ -9,6 +9,12 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
 import stargame.gb.ru.math.MatrixUtils;
 import stargame.gb.ru.math.Rect;
 
@@ -26,6 +32,8 @@ public class BaseScreen implements Screen, InputProcessor {
 
     protected SpriteBatch batch;
 
+    private List<Sprite> list;
+
     @Override
     public void show() {
         screenBounds = new Rect();
@@ -36,11 +44,24 @@ public class BaseScreen implements Screen, InputProcessor {
         batch = new SpriteBatch();
         batch.getProjectionMatrix().idt();
         Gdx.input.setInputProcessor(this);
+        list = new ArrayList<>();
     }
 
     @Override
     public void render(float delta) {
+        update(delta);
         ScreenUtils.clear(0.5f, 0.23f, 0.74f, 1);
+        batch.begin();
+        for (Sprite sprite: list) {
+            sprite.draw(batch);
+        }
+        batch.end();
+    }
+
+    private void update(float delta){
+        for (Sprite sprite: list) {
+            sprite.update(delta);
+        }
     }
 
     @Override
@@ -59,9 +80,14 @@ public class BaseScreen implements Screen, InputProcessor {
         resize(worldBounds);
     }
 
-    public void resize(Rect worldBounds) {
-        System.out.println("resize worldBounds.width = "
-                + worldBounds.getWidth() + " worldBounds.height = " + worldBounds.getHeight());
+    public void resize(final Rect worldBounds) {
+        for (Sprite sprite: list) {
+            sprite.resize(worldBounds);
+        }
+    }
+
+    public void addSprites(Sprite... sprites){
+        list.addAll(Arrays.asList(sprites));
     }
 
     @Override
