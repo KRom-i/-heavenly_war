@@ -3,6 +3,18 @@ mainAtlas.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+tree
+  rotate: false
+  xy: 1, 1
+  size: 853, 702
+  orig: 853, 702
+  offset: 0, 0
+  index: -1
+
+mainAtlas2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 userPlane
   rotate: false
   xy: 1, 1
@@ -11,7 +23,7 @@ userPlane
   offset: 0, 0
   index: -1
 
-mainAtlas2.png
+mainAtlas3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
