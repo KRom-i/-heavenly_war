@@ -1,7 +1,5 @@
 package stargame.gb.ru.sprite;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
@@ -14,7 +12,6 @@ public class Cloud extends Sprite {
     private float size;
     private Rect worldBounds;
     private Vector2 v;
-    private static final float SPEED = 0.06f;
 
     public Cloud(TextureAtlas atlas, float size, float minVectorX) {
         super(atlas.findRegion("cloud"));
@@ -48,14 +45,6 @@ public class Cloud extends Sprite {
         if (getTop() < worldBounds.getBottom()) {
             setBottom(worldBounds.getTop());
         }
-    }
-
-    public void left(){
-        v.add(new Vector2(-SPEED, 0));
-    }
-
-    public void right(){
-        v.add(new Vector2(SPEED, 0));
     }
 
 }

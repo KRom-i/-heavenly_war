@@ -2,19 +2,21 @@ package stargame.gb.ru.sprite;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Random;
 
 import stargame.gb.ru.base.Sprite;
 import stargame.gb.ru.math.Rect;
-import stargame.gb.ru.utils.CloudMove;
+import stargame.gb.ru.poll.BulletPool;
+import stargame.gb.ru.screen.Bullet;
 
 public class UserPlane extends Sprite{
 
     private static float HEIGHT = 0.15f;
-    private static final float PADDING = 0.05f;
-    private static final float PADDING_BOTTOM = 0.03f;
+    private static final float PADDING = 0.005f;
+    private static final float PADDING_BOTTOM = 0.005f;
     private static final float SPEED = 0.3f;
 
     private Rect woldBounds;
@@ -27,15 +29,22 @@ public class UserPlane extends Sprite{
     private int leftPointer;
     private int rightPointer;
 
-    private float countAngle;
-    private CloudMove cloudMove;
+    private final BulletPool bulletPool;
+    private final TextureRegion bulletRegion;
+    private final Vector2 bulletV;
+    private final float bulletHeight;
+    private final int damage;
 
 
-    public UserPlane(TextureAtlas atlas, CloudMove cloudMove) {
+    public UserPlane(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("userPlane"));
         setHeightProportion(HEIGHT);
         v = new Vector2(0, 0);
-        this.cloudMove = cloudMove;
+        this.bulletPool = bulletPool;
+        this.bulletRegion = atlas.findRegion("bullet");
+        this.bulletV = new Vector2(0, 0.5f);
+        this.bulletHeight = 0.01f;
+        this.damage = 1;
         start();
     }
 
@@ -48,20 +57,16 @@ public class UserPlane extends Sprite{
     @Override
     public void update(float delta) {
         if (getLeft() < (woldBounds.getLeft() + PADDING)){
-            cloudMove.down();
-            if (pressedRight) {
+            if (!pressedLeft) {
                 moveRight();
             } else {
                 stop();
-                cloudMove.right();
             }
         } else if (getRight() > (woldBounds.getRight() - PADDING)){
-            cloudMove.down();
-            if (pressedLeft) {
+            if (!pressedRight) {
                 moveLeft();
             } else {
                 stop();
-                cloudMove.left();
             }
         }
         pos.mulAdd(v, delta);
@@ -146,7 +151,12 @@ public class UserPlane extends Sprite{
     }
 
     private void stop(){
-        v.set(0,0);
+        v.setZero();
+    }
+
+    private void shoot() {
+        Bullet bullet = bulletPool.obtain();
+        bullet.set(this, bulletRegion, this.pos, bulletV, woldBounds, bulletHeight, damage);
     }
 
 }

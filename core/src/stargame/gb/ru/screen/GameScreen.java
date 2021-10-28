@@ -4,11 +4,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import stargame.gb.ru.base.BaseScreen;
+import stargame.gb.ru.math.Rect;
+import stargame.gb.ru.poll.BulletPool;
+import stargame.gb.ru.poll.CloudPoll;
 import stargame.gb.ru.sprite.Background;
-import stargame.gb.ru.utils.CloudMove;
-import stargame.gb.ru.utils.Clouds;
 import stargame.gb.ru.sprite.UserPlane;
-
 
 public class GameScreen extends BaseScreen {
 
@@ -16,8 +16,8 @@ public class GameScreen extends BaseScreen {
     private Background background;
     private TextureAtlas atlas;
     private UserPlane userPlane;
-    private Clouds cloudsBottom, cloudsTopSmall, cloudsTopBig;
-    private CloudMove cloudMove;
+    private CloudPoll cloudsBottom, cloudsTopSmall, cloudsTopBig;
+    private BulletPool bulletPool;
 
     @Override
     public void show() {
@@ -25,19 +25,53 @@ public class GameScreen extends BaseScreen {
         textureBackground = new Texture("textures/background_game.jpg");
         atlas = new TextureAtlas("textures/mainAtlas.pack");
         background = new Background(textureBackground);
+        cloudsBottom = new CloudPoll(atlas, 20, 5f, -0.1f);
+        cloudsTopBig  = new CloudPoll(atlas, 5, 1.5f, -0.2f);
+        cloudsTopSmall = new CloudPoll(atlas, 5, 1.5f, -0.3f);
+        bulletPool = new BulletPool();
+        userPlane = new UserPlane(atlas, bulletPool);
+    }
 
-        cloudsBottom = new Clouds(atlas, 20, 5f, -0.1f);
-        cloudsTopBig  = new Clouds(atlas, 5, 1.5f, -0.2f);
-        cloudsTopSmall = new Clouds(atlas, 5, 1.5f, -0.3f);
-        cloudMove = new CloudMove(cloudsBottom, cloudsTopSmall, cloudsTopBig);
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        update(delta);
+        freeAllDestroyed();
+        draw();
+    }
 
-        userPlane = new UserPlane(atlas, cloudMove);
+    private void update(float delta) {
+        background.update(delta);
+        cloudsBottom.update(delta);
+        userPlane.update(delta);
+        bulletPool.updateActiveObjects(delta);
+        cloudsBottom.update(delta);
+        cloudsTopBig.update(delta);
+        cloudsTopSmall.update(delta);
+    }
 
-        addSprites(background);
-        addSprites(cloudsBottom.getSprites());
-        addSprites(userPlane);
-        addSprites(cloudsTopBig.getSprites());
-        addSprites(cloudsTopSmall.getSprites());
+    private void freeAllDestroyed() {
+        bulletPool.freeAllDestroyed();
+    }
+
+    private void draw() {
+        batch.begin();
+        background.draw(batch);
+        cloudsBottom.draw(batch);
+        userPlane.draw(batch);
+        bulletPool.drawActiveObjects(batch);
+//        cloudsTopBig.draw(batch);
+//        cloudsTopSmall.draw(batch);
+        batch.end();
+    }
+
+    @Override
+    public void resize(Rect worldBounds) {
+        background.resize(worldBounds);
+        userPlane.resize(worldBounds);
+        cloudsBottom.resize(worldBounds);
+        cloudsTopBig.resize(worldBounds);
+        cloudsTopSmall.resize(worldBounds);
     }
 
     @Override

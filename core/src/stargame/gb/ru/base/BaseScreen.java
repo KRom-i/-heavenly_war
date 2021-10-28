@@ -32,7 +32,6 @@ public class BaseScreen implements Screen, InputProcessor {
 
     protected SpriteBatch batch;
 
-    private List<Sprite> list;
 
     @Override
     public void show() {
@@ -44,24 +43,14 @@ public class BaseScreen implements Screen, InputProcessor {
         batch = new SpriteBatch();
         batch.getProjectionMatrix().idt();
         Gdx.input.setInputProcessor(this);
-        list = new ArrayList<>();
     }
 
     @Override
     public void render(float delta) {
-        update(delta);
         ScreenUtils.clear(0.5f, 0.23f, 0.74f, 1);
-        batch.begin();
-        for (Sprite sprite: list) {
-            sprite.draw(batch);
-        }
-        batch.end();
     }
 
     private void update(float delta){
-        for (Sprite sprite: list) {
-            sprite.update(delta);
-        }
     }
 
     @Override
@@ -81,13 +70,6 @@ public class BaseScreen implements Screen, InputProcessor {
     }
 
     public void resize(final Rect worldBounds) {
-        for (Sprite sprite: list) {
-            sprite.resize(worldBounds);
-        }
-    }
-
-    public void addSprites(Sprite... sprites){
-        list.addAll(Arrays.asList(sprites));
     }
 
     @Override

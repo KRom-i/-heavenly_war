@@ -39,7 +39,34 @@ public class MenuScreen extends BaseScreen {
         background = new Background(textureBackground);
         exit = new ExitButton(atlas);
         play = new PlayButton(atlas, game);
-        addSprites(background, exit, play);
+    }
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        update(delta);
+        draw();
+    }
+
+    private void update(float delta) {
+        background.update(delta);
+        exit.update(delta);
+        play.update(delta);
+    }
+
+    private void draw() {
+        batch.begin();
+        background.draw(batch);
+        exit.draw(batch);
+        play.draw(batch);
+        batch.end();
+    }
+
+    @Override
+    public void resize(Rect worldBounds) {
+        background.resize(worldBounds);
+        exit.resize(worldBounds);
+        play.resize(worldBounds);
     }
 
     @Override
