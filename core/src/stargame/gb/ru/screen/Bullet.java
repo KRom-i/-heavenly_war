@@ -1,5 +1,7 @@
 package stargame.gb.ru.screen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
@@ -14,11 +16,13 @@ public class Bullet extends Sprite {
     private Rect worldBounds;
     private int damage;
     private Sprite owner;
+    private Sound sound;
 
 
-    public Bullet() {
+    public Bullet(Sound sound) {
         regions = new TextureRegion[1];
         angle = 90;
+        this.sound = sound;
     }
 
     public void set(
@@ -37,6 +41,7 @@ public class Bullet extends Sprite {
         this.worldBounds = worldBounds;
         setHeightProportion(height);
         this.damage = damage;
+        sound.play(0.05f);
     }
 
     @Override

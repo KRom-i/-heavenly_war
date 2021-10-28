@@ -1,5 +1,8 @@
 package stargame.gb.ru.screen;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -18,18 +21,24 @@ public class GameScreen extends BaseScreen {
     private UserPlane userPlane;
     private CloudPoll cloudsBottom, cloudsTopSmall, cloudsTopBig;
     private BulletPool bulletPool;
+    private Sound bulletSound;
+    private Music music;
 
     @Override
     public void show() {
         super.show();
         textureBackground = new Texture("textures/background_game.jpg");
         atlas = new TextureAtlas("textures/mainAtlas.pack");
+        bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
         background = new Background(textureBackground);
         cloudsBottom = new CloudPoll(atlas, 20, 5f, -0.1f);
         cloudsTopBig  = new CloudPoll(atlas, 5, 1.5f, -0.2f);
         cloudsTopSmall = new CloudPoll(atlas, 5, 1.5f, -0.3f);
-        bulletPool = new BulletPool();
+        bulletPool = new BulletPool(bulletSound);
         userPlane = new UserPlane(atlas, bulletPool);
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
+        music.setVolume(0.5f);
+        music.play();
     }
 
     @Override
@@ -79,6 +88,9 @@ public class GameScreen extends BaseScreen {
         super.dispose();
         textureBackground.dispose();
         atlas.dispose();
+        bulletPool.dispose();
+        bulletSound.dispose();
+        music.dispose();
     }
 
     @Override
