@@ -62,4 +62,5 @@ public class MenuScreen extends BaseScreen {
         play.touchUp(touch, pointer, button);
         return super.touchUp(touch, pointer, button);
     }
+
 }
