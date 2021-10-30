@@ -35,6 +35,8 @@ public class UserPlane extends Sprite{
     private final float bulletHeight;
     private final int damage;
 
+    private static final int shotsSecond = 5;
+    private int shotControl;
 
     public UserPlane(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("userPlane"));
@@ -70,6 +72,12 @@ public class UserPlane extends Sprite{
             }
         }
         pos.mulAdd(v, delta);
+
+        shotControl++;
+        if (shotControl == (60 / shotsSecond)){
+            shoot();
+            shotControl = 0;
+        };
     }
 
     @Override
