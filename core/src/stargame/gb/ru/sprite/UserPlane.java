@@ -18,6 +18,7 @@ public class UserPlane extends Sprite{
     private static final float PADDING = 0.005f;
     private static final float PADDING_BOTTOM = 0.005f;
     private static final float SPEED = 0.3f;
+    private static final float SHOTS_SECONDS = 5;
 
     private Rect woldBounds;
     private final Vector2 v;
@@ -35,8 +36,7 @@ public class UserPlane extends Sprite{
     private final float bulletHeight;
     private final int damage;
 
-    private static final int shotsSecond = 5;
-    private int shotControl;
+    private float shotControl;
 
     public UserPlane(TextureAtlas atlas, BulletPool bulletPool) {
         super(atlas.findRegion("userPlane"));
@@ -74,7 +74,7 @@ public class UserPlane extends Sprite{
         pos.mulAdd(v, delta);
 
         shotControl++;
-        if (shotControl == (60 / shotsSecond)){
+        if (shotControl == (60 / SHOTS_SECONDS)){
             shoot();
             shotControl = 0;
         };
