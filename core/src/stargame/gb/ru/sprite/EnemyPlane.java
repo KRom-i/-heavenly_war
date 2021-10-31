@@ -10,7 +10,9 @@ import stargame.gb.ru.poll.BulletPool;
 
 public class EnemyPlane extends Plane {
 
-    public EnemyPlane(BulletPool bulletPool, Rect worldBounds, Sound bulletSound) {
+    private UserPlane userPlane;
+
+    public EnemyPlane(BulletPool bulletPool, Rect worldBounds, Sound bulletSound, UserPlane userPlane) {
         this.bulletPool = bulletPool;
         this.worldBounds = worldBounds;
         this.bulletSound = bulletSound;
@@ -19,6 +21,7 @@ public class EnemyPlane extends Plane {
         this.v = new Vector2();
         this.v0 = new Vector2();
         this.angle = 180;
+        this.userPlane = userPlane;
     }
 
     @Override
@@ -27,6 +30,9 @@ public class EnemyPlane extends Plane {
         if (getBottom() < worldBounds.getBottom()) {
             destroy();
         }
+        if (!isOutside(userPlane)){
+            destroy();
+        };
     }
 
     public void set(

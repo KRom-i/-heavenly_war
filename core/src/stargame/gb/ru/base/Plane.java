@@ -33,7 +33,16 @@ public class Plane extends Sprite{
 
     @Override
     public void update(float delta) {
-        pos.mulAdd(v, delta);
+        if (getTop() > worldBounds.getTop()){
+            pos.mulAdd(new Vector2(0, -0.4f), delta);
+        } else {
+            pos.mulAdd(v, delta);
+            shotControl++;
+            if (shotControl >= (60 / shotsSecond)){
+                shoot();
+                shotControl = 0;
+            };
+        }
         bulletPos.set(pos);
     }
 

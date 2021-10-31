@@ -44,7 +44,7 @@ public class GameScreen extends BaseScreen {
         cloudsTopSmall = new CloudPoll(atlas, 5, 1.5f, -0.3f);
         bulletPool = new BulletPool(bulletSound);
         userPlane = new UserPlane(atlas, bulletPool);
-        enemyPool = new EnemyPool(bulletPool, worldBounds, bulletSound);
+        enemyPool = new EnemyPool(bulletPool, worldBounds, bulletSound, userPlane);
         enemyEmitter = new EnemyEmitter(enemyPool, worldBounds, atlas);
     }
 
