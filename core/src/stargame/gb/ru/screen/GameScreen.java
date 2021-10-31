@@ -10,8 +10,10 @@ import stargame.gb.ru.base.BaseScreen;
 import stargame.gb.ru.math.Rect;
 import stargame.gb.ru.poll.BulletPool;
 import stargame.gb.ru.poll.CloudPoll;
+import stargame.gb.ru.poll.EnemyPool;
 import stargame.gb.ru.sprite.Background;
 import stargame.gb.ru.sprite.UserPlane;
+import stargame.gb.ru.util.EnemyEmitter;
 
 public class GameScreen extends BaseScreen {
 
@@ -23,6 +25,8 @@ public class GameScreen extends BaseScreen {
     private BulletPool bulletPool;
     private Sound bulletSound;
     private Music music;
+    private EnemyPool enemyPool;
+    private EnemyEmitter enemyEmitter;
 
     @Override
     public void show() {
@@ -40,7 +44,8 @@ public class GameScreen extends BaseScreen {
         cloudsTopSmall = new CloudPoll(atlas, 5, 1.5f, -0.3f);
         bulletPool = new BulletPool(bulletSound);
         userPlane = new UserPlane(atlas, bulletPool);
-
+        enemyPool = new EnemyPool(bulletPool, worldBounds, bulletSound);
+        enemyEmitter = new EnemyEmitter(enemyPool, worldBounds, atlas);
     }
 
     @Override
@@ -59,18 +64,22 @@ public class GameScreen extends BaseScreen {
         cloudsBottom.update(delta);
         cloudsTopBig.update(delta);
         cloudsTopSmall.update(delta);
+        enemyPool.updateActiveObjects(delta);
+        enemyEmitter.generate(delta);
     }
 
     private void freeAllDestroyed() {
         bulletPool.freeAllDestroyed();
+        enemyPool.freeAllDestroyed();
     }
 
     private void draw() {
         batch.begin();
         background.draw(batch);
         cloudsBottom.draw(batch);
-        userPlane.draw(batch);
         bulletPool.drawActiveObjects(batch);
+        enemyPool.drawActiveObjects(batch);
+        userPlane.draw(batch);
 //        cloudsTopBig.draw(batch);
 //        cloudsTopSmall.draw(batch);
         batch.end();
@@ -90,6 +99,7 @@ public class GameScreen extends BaseScreen {
         super.dispose();
         textureBackground.dispose();
         atlas.dispose();
+        enemyPool.dispose();
         bulletPool.dispose();
         bulletSound.dispose();
         music.dispose();

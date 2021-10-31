@@ -1,4 +1,4 @@
-package stargame.gb.ru.screen;
+package stargame.gb.ru.sprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
