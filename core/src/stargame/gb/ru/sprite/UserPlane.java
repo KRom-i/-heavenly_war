@@ -35,16 +35,16 @@ public class UserPlane extends Sprite{
     private final float bulletHeight;
     private final int damage;
 
-    private static final int shotsSecond = 5;
+    private static final int shotsSecond = 7;
     private int shotControl;
 
     public UserPlane(TextureAtlas atlas, BulletPool bulletPool) {
-        super(atlas.findRegion("userPlane"));
+        super(atlas.findRegion("userPlaneRed"));
         setHeightProportion(HEIGHT);
         v = new Vector2(0, 0);
         this.bulletPool = bulletPool;
         this.bulletRegion = atlas.findRegion("bullet");
-        this.bulletV = new Vector2(0, 0.5f);
+        this.bulletV = new Vector2(0, 0.7f);
         this.bulletHeight = 0.01f;
         this.damage = 1;
         start();
@@ -73,11 +73,11 @@ public class UserPlane extends Sprite{
         }
         pos.mulAdd(v, delta);
 
-        shotControl++;
-        if (shotControl == (60 / shotsSecond)){
-            shoot();
-            shotControl = 0;
-        };
+//        shotControl++;
+//        if (shotControl == (60 / shotsSecond)){
+//            shoot();
+//            shotControl = 0;
+//        };
     }
 
     @Override
@@ -118,6 +118,10 @@ public class UserPlane extends Sprite{
                 moveRight();
                 pressedRight = true;
                 break;
+            case Input.Keys.SPACE:
+                shoot();
+                break;
+
         }
         return false;
     }
