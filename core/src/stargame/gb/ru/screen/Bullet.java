@@ -41,7 +41,7 @@ public class Bullet extends Sprite {
         this.worldBounds = worldBounds;
         setHeightProportion(height);
         this.damage = damage;
-        sound.play(0.05f);
+        sound.play(0.01f);
     }
 
     @Override

@@ -27,18 +27,20 @@ public class GameScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
+        bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet_2.wav"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/plane.mp3"));
+        music.setVolume(0.5f);
+        music.setLooping(true);
+        music.play();
         textureBackground = new Texture("textures/background_game.jpg");
         atlas = new TextureAtlas("textures/mainAtlas.pack");
-        bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
         background = new Background(textureBackground);
         cloudsBottom = new CloudPoll(atlas, 20, 5f, -0.1f);
         cloudsTopBig  = new CloudPoll(atlas, 5, 1.5f, -0.2f);
         cloudsTopSmall = new CloudPoll(atlas, 5, 1.5f, -0.3f);
         bulletPool = new BulletPool(bulletSound);
         userPlane = new UserPlane(atlas, bulletPool);
-        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
-        music.setVolume(0.5f);
-        music.play();
+
     }
 
     @Override
