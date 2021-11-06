@@ -9,14 +9,17 @@ import java.util.Random;
 import stargame.gb.ru.base.Plane;
 import stargame.gb.ru.math.Rect;
 import stargame.gb.ru.poll.BulletPool;
+import stargame.gb.ru.poll.ExplosionPool;
 import stargame.gb.ru.util.Regions;
 
 public class UserPlane extends Plane {
 
-    private static float HEIGHT = 0.15f;
+    public static final float BULLET_HEIGHT = 0.1f;
+    public static float HEIGHT = 0.1f;
+
     private static final float PADDING = 0.005f;
     private static final float PADDING_BOTTOM = 0.005f;
-    private static final float SPEED = 0.3f;
+    private static final float SPEED = 0.15f;
 
     private boolean pressedLeft;
     private boolean pressedRight;
@@ -25,17 +28,19 @@ public class UserPlane extends Plane {
     private int leftPointer;
     private int rightPointer;
 
-    public UserPlane(TextureAtlas atlas, BulletPool bulletPool) {
+    public UserPlane(TextureAtlas atlas, ExplosionPool explosionPool, BulletPool bulletPool) {
         this.regions = Regions.get(atlas, "userPlane");
         setHeightProportion(HEIGHT);
         v = new Vector2(0, 0);
         this.bulletPool = bulletPool;
         this.bulletRegion = atlas.findRegion("bullet");
         this.bulletV = new Vector2(0, 0.7f);
-        this.bulletHeight = 0.01f;
+        this.bulletHeight = HEIGHT * BULLET_HEIGHT;
         this.damage = 1;
+        this.hp = 1;
         this.shotsSecond = 5;
         this.bulletPos = new Vector2();
+        this.explosionPool = explosionPool;
         start();
     }
 
@@ -47,8 +52,9 @@ public class UserPlane extends Plane {
 
     @Override
     public void update(float delta) {
+        super.update(delta);
 
-        bulletPos.set(pos.x, getTop());
+        bulletPos.set(this.pos.x, getTop());
 
         if (getLeft() < (worldBounds.getLeft() + PADDING)){
             if (!pressedLeft) {
@@ -64,12 +70,6 @@ public class UserPlane extends Plane {
             }
         }
         pos.mulAdd(v, delta);
-
-        shotControl++;
-        if (shotControl >= (60 / shotsSecond)){
-            shoot();
-            shotControl = 0;
-        };
 
     }
 
@@ -110,9 +110,6 @@ public class UserPlane extends Plane {
             case Input.Keys.D:
                 moveRight();
                 pressedRight = true;
-                break;
-            case Input.Keys.SPACE:
-                shoot();
                 break;
 
         }
@@ -159,9 +156,33 @@ public class UserPlane extends Plane {
         v.setZero();
     }
 
-//    private void shoot() {
-//        Bullet bullet = bulletPool.obtain();
-//        bullet.set(this, bulletRegion, bulletPos, bulletV, worldBounds, bulletHeight, damage);
-//    }
+    public boolean isBulletCollision(Bullet bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > pos.y
+                || bullet.getTop() < getBottom());
+    }
 
+    @Override
+    public void destroy() {
+        super.destroy();
+
+        System.out.println("GAME OVER");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("NEW GAME");
+                destroyed = false;
+                hp = 1;
+                start();
+            }
+        }).start();
+
+    }
 }

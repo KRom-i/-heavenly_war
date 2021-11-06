@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import stargame.gb.ru.math.Rect;
+import stargame.gb.ru.util.Regions;
 
 
 public class Sprite extends Rect {
@@ -13,11 +14,16 @@ public class Sprite extends Rect {
     protected float scale = 1f;
     protected TextureRegion[] regions;
     protected int frame;
-    private boolean destroyed;
+    protected boolean destroyed;
 
     public Sprite(){
 
     }
+
+    public Sprite (TextureRegion region, int rows, int cols, int frames) {
+        this.regions = Regions.split(region, rows, cols, frames);
+    }
+
 
     public Sprite(TextureRegion region) {
         if (region == null) {
