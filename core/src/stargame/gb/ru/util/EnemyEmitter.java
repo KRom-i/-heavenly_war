@@ -8,27 +8,28 @@ import stargame.gb.ru.math.Rect;
 import stargame.gb.ru.math.Rnd;
 import stargame.gb.ru.poll.EnemyPool;
 import stargame.gb.ru.sprite.EnemyPlane;
+import stargame.gb.ru.sprite.UserPlane;
 
 public class EnemyEmitter {
 
     private static final float GENERATE_INTERVAL = 4f;
 
-    private static final float ENEMY_SMALL_HEIGHT = 0.1f;
-    private static final float ENEMY_SMALL_BULLET_HEIGHT = 0.01f;
+    private static final float ENEMY_SMALL_HEIGHT = UserPlane.HEIGHT * 0.8f;
+    private static final float ENEMY_SMALL_BULLET_HEIGHT = ENEMY_SMALL_HEIGHT * UserPlane.BULLET_HEIGHT;
     private static final int ENEMY_SMALL_BULLET_DAMAGE = 1;
-    private static final float ENEMY_SMALL_RELOAD_INTERVAL = 3f;
+    private static final float ENEMY_SMALL_RELOAD_INTERVAL = 1.5f;
     private static final int ENEMY_SMALL_HP = 1;
 
-    private static final float ENEMY_MEDIUM_HEIGHT = 0.15f;
-    private static final float ENEMY_MEDIUM_BULLET_HEIGHT = 0.02f;
+    private static final float ENEMY_MEDIUM_HEIGHT = UserPlane.HEIGHT;
+    private static final float ENEMY_MEDIUM_BULLET_HEIGHT = ENEMY_MEDIUM_HEIGHT * UserPlane.BULLET_HEIGHT;
     private static final int ENEMY_MEDIUM_BULLET_DAMAGE = 5;
-    private static final float ENEMY_MEDIUM_RELOAD_INTERVAL = 4f;
+    private static final float ENEMY_MEDIUM_RELOAD_INTERVAL = 1f;
     private static final int ENEMY_MEDIUM_HP = 5;
 
-    private static final float ENEMY_BIG_HEIGHT = 0.2f;
-    private static final float ENEMY_BIG_BULLET_HEIGHT = 0.04f;
+    private static final float ENEMY_BIG_HEIGHT = UserPlane.HEIGHT * 1.5f;;
+    private static final float ENEMY_BIG_BULLET_HEIGHT = ENEMY_BIG_HEIGHT * UserPlane.BULLET_HEIGHT;
     private static final int ENEMY_BIG_BULLET_DAMAGE = 10;
-    private static final float ENEMY_BIG_RELOAD_INTERVAL = 1f;
+    private static final float ENEMY_BIG_RELOAD_INTERVAL = 0.5f;
     private static final int ENEMY_BIG_HP = 10;
 
     private final EnemyPool enemyPool;

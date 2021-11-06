@@ -13,16 +13,18 @@ public class EnemyPool extends SpritesPool<EnemyPlane> {
     private final Rect worldBounds;
     private final Sound bulletSound;
     private final UserPlane userPlane;
+    private final ExplosionPool explosionPool;
 
-    public EnemyPool(BulletPool bulletPool, Rect worldBounds, Sound bulletSound, UserPlane userPlane) {
+    public EnemyPool(BulletPool bulletPool, ExplosionPool explosionPool, Rect worldBounds, Sound bulletSound, UserPlane userPlane) {
         this.bulletPool = bulletPool;
         this.worldBounds = worldBounds;
         this.bulletSound = bulletSound;
         this.userPlane = userPlane;
+        this.explosionPool = explosionPool;
     }
 
     @Override
     protected EnemyPlane newObject() {
-        return new EnemyPlane(bulletPool, worldBounds, bulletSound, userPlane);
+        return new EnemyPlane(bulletPool, worldBounds, explosionPool, bulletSound, userPlane);
     }
 }

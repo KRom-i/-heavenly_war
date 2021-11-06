@@ -6,12 +6,18 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.List;
+
 import stargame.gb.ru.base.BaseScreen;
 import stargame.gb.ru.math.Rect;
 import stargame.gb.ru.poll.BulletPool;
 import stargame.gb.ru.poll.CloudPoll;
 import stargame.gb.ru.poll.EnemyPool;
+import stargame.gb.ru.poll.ExplosionPool;
 import stargame.gb.ru.sprite.Background;
+import stargame.gb.ru.sprite.Bullet;
+import stargame.gb.ru.sprite.EnemyPlane;
 import stargame.gb.ru.sprite.UserPlane;
 import stargame.gb.ru.util.EnemyEmitter;
 
@@ -20,31 +26,51 @@ public class GameScreen extends BaseScreen {
     private Texture textureBackground;
     private Background background;
     private TextureAtlas atlas;
+    private TextureAtlas atlas2;
+
     private UserPlane userPlane;
+
     private CloudPoll cloudsBottom, cloudsTopSmall, cloudsTopBig;
+
     private BulletPool bulletPool;
     private Sound bulletSound;
     private Music music;
+
     private EnemyPool enemyPool;
     private EnemyEmitter enemyEmitter;
+
+    private ExplosionPool explosionPool;
+    private Sound explosionSound;
 
     @Override
     public void show() {
         super.show();
         bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet_2.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/plane.mp3"));
+        explosionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
+
         music.setVolume(0.5f);
         music.setLooping(true);
         music.play();
+
         textureBackground = new Texture("textures/background_game.jpg");
         atlas = new TextureAtlas("textures/mainAtlas.pack");
+        atlas2 = new TextureAtlas("textures/Atlas.tpack");
+
         background = new Background(textureBackground);
+
         cloudsBottom = new CloudPoll(atlas, 20, 5f, -0.1f);
         cloudsTopBig  = new CloudPoll(atlas, 5, 1.5f, -0.2f);
         cloudsTopSmall = new CloudPoll(atlas, 5, 1.5f, -0.3f);
+
         bulletPool = new BulletPool(bulletSound);
-        userPlane = new UserPlane(atlas, bulletPool);
-        enemyPool = new EnemyPool(bulletPool, worldBounds, bulletSound, userPlane);
+
+        explosionPool = new ExplosionPool(atlas2, explosionSound);
+
+        userPlane = new UserPlane(atlas, explosionPool, bulletPool);
+
+        enemyPool = new EnemyPool(bulletPool, explosionPool, worldBounds, bulletSound, userPlane);
+
         enemyEmitter = new EnemyEmitter(enemyPool, worldBounds, atlas);
     }
 
@@ -52,6 +78,7 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        checkCollisions();
         freeAllDestroyed();
         draw();
     }
@@ -59,17 +86,22 @@ public class GameScreen extends BaseScreen {
     private void update(float delta) {
         background.update(delta);
         cloudsBottom.update(delta);
-        userPlane.update(delta);
-        bulletPool.updateActiveObjects(delta);
-        cloudsBottom.update(delta);
         cloudsTopBig.update(delta);
         cloudsTopSmall.update(delta);
-        enemyPool.updateActiveObjects(delta);
-        enemyEmitter.generate(delta);
+        explosionPool.updateActiveObjects(delta);
+
+        if (!userPlane.isDestroyed()){
+            userPlane.update(delta);
+            bulletPool.updateActiveObjects(delta);
+            enemyPool.updateActiveObjects(delta);
+            enemyEmitter.generate(delta);
+        }
+
     }
 
     private void freeAllDestroyed() {
         bulletPool.freeAllDestroyed();
+        explosionPool.freeAllDestroyed();
         enemyPool.freeAllDestroyed();
     }
 
@@ -77,12 +109,50 @@ public class GameScreen extends BaseScreen {
         batch.begin();
         background.draw(batch);
         cloudsBottom.draw(batch);
-        bulletPool.drawActiveObjects(batch);
-        enemyPool.drawActiveObjects(batch);
-        userPlane.draw(batch);
+
+        if (!userPlane.isDestroyed()){
+            bulletPool.drawActiveObjects(batch);
+            enemyPool.drawActiveObjects(batch);
+            userPlane.draw(batch);
+        }
 //        cloudsTopBig.draw(batch);
 //        cloudsTopSmall.draw(batch);
+        explosionPool.drawActiveObjects(batch);
         batch.end();
+    }
+
+    private void checkCollisions() {
+        if (userPlane.isDestroyed()) {
+            return;
+        }
+        List<EnemyPlane> enemyPlaneList = enemyPool.getActiveObjects();
+        for (EnemyPlane enemyPlane : enemyPlaneList) {
+            float minDist = userPlane.getWidth();
+            if (!enemyPlane.isDestroyed()
+                    && userPlane.pos.dst(enemyPlane.pos) < minDist) {
+                enemyPlane.destroy();
+                userPlane.damage(enemyPlane.getDamage() * 2);
+            }
+        }
+        List<Bullet> bulletList = bulletPool.getActiveObjects();
+        for (Bullet bullet : bulletList) {
+            if (bullet.isDestroyed()) {
+                continue;
+            }
+            if (bullet.getOwner() != userPlane) {
+                if (userPlane.isBulletCollision(bullet)) {
+                    userPlane.damage(bullet.getDamage());
+                    bullet.destroy();
+                }
+                continue;
+            }
+            for (EnemyPlane enemyPlane : enemyPlaneList) {
+                if (enemyPlane.isBulletCollision(bullet)) {
+                    enemyPlane.damage(bullet.getDamage());
+                    bullet.destroy();
+                }
+            }
+        }
     }
 
     @Override
@@ -103,6 +173,8 @@ public class GameScreen extends BaseScreen {
         bulletPool.dispose();
         bulletSound.dispose();
         music.dispose();
+        atlas2.dispose();
+        explosionSound.dispose();
     }
 
     @Override
