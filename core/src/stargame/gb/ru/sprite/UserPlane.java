@@ -14,6 +14,7 @@ import stargame.gb.ru.util.Regions;
 
 public class UserPlane extends Plane {
 
+    private static final int DEFAULT_HP = 1;
     public static final float BULLET_HEIGHT = 0.1f;
     public static float HEIGHT = 0.1f;
 
@@ -37,7 +38,7 @@ public class UserPlane extends Plane {
         this.bulletV = new Vector2(0, 0.7f);
         this.bulletHeight = HEIGHT * BULLET_HEIGHT;
         this.damage = 1;
-        this.hp = 1;
+        this.hp = DEFAULT_HP;
         this.shotsSecond = 5;
         this.bulletPos = new Vector2();
         this.explosionPool = explosionPool;
@@ -166,23 +167,11 @@ public class UserPlane extends Plane {
     @Override
     public void destroy() {
         super.destroy();
+    }
 
-        System.out.println("GAME OVER");
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("NEW GAME");
-                destroyed = false;
-                hp = 1;
-                start();
-            }
-        }).start();
-
+    public void restore(){
+        destroyed = false;
+        hp = DEFAULT_HP;
+        start();
     }
 }
