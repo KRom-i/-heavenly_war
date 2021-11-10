@@ -14,7 +14,7 @@ import stargame.gb.ru.util.Regions;
 
 public class UserPlane extends Plane {
 
-    private static final int DEFAULT_HP = 100;
+    public static final int DEFAULT_HP = 100;
     public static final float BULLET_HEIGHT = 0.1f;
     public static float HEIGHT = 0.1f;
 
@@ -182,5 +182,13 @@ public class UserPlane extends Plane {
 
     public int getHp(){
         return hp;
+    }
+
+    public void addHp(int hp) {
+        if ((this.hp + hp) > DEFAULT_HP){
+            this.hp = DEFAULT_HP;
+            return;
+        }
+        this.hp += hp;
     }
 }

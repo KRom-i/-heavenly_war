@@ -1,17 +1,23 @@
 package stargame.gb.ru.sprite;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import stargame.gb.ru.base.Plane;
+import stargame.gb.ru.base.Sprite;
 import stargame.gb.ru.math.Rect;
 import stargame.gb.ru.poll.BulletPool;
 import stargame.gb.ru.poll.ExplosionPool;
 
 public class EnemyPlane extends Plane {
 
-    public EnemyPlane(BulletPool bulletPool, Rect worldBounds, ExplosionPool explosionPool, Sound bulletSound, UserPlane userPlane) {
+    public HpIndicator hpIndicator;
+    private int defaultHp;
+
+    public EnemyPlane(BulletPool bulletPool, Rect worldBounds, ExplosionPool explosionPool, Sound bulletSound, TextureAtlas atlas) {
         this.bulletPool = bulletPool;
         this.explosionPool = explosionPool;
         this.worldBounds = worldBounds;
@@ -21,12 +27,14 @@ public class EnemyPlane extends Plane {
         this.v = new Vector2();
         this.v0 = new Vector2();
         this.angle = 180;
+        this.hpIndicator = new HpIndicator(atlas, this);
     }
 
     @Override
     public void update(float delta) {
-        bulletPos.set(pos);
+        hpIndicator.update(delta);
 
+        bulletPos.set(pos);
         super.update(delta);
 
         if (getTop() < worldBounds.getTop()) {
@@ -36,7 +44,18 @@ public class EnemyPlane extends Plane {
         if (getBottom() < worldBounds.getBottom()) {
             destroy();
         }
+    }
 
+    @Override
+    public void resize(Rect worldBounds) {
+        super.resize(worldBounds);
+        hpIndicator.resize(worldBounds);
+    }
+
+    @Override
+    public void draw(SpriteBatch batch) {
+        super.draw(batch);
+        hpIndicator.draw(batch);
     }
 
     public void set(
@@ -60,6 +79,7 @@ public class EnemyPlane extends Plane {
         this.shotsSecond = shotsSecond;
         setHeightProportion(height);
         this.v.set(0, -0.5f);
+        this.defaultHp = hp;
     }
 
     public boolean isBulletCollision(Bullet bullet) {
@@ -67,5 +87,13 @@ public class EnemyPlane extends Plane {
                 || bullet.getLeft() > getRight()
                 || bullet.getBottom() > getTop()
                 || bullet.getTop() < pos.y);
+    }
+
+    public int getDefaultHp() {
+        return defaultHp;
+    }
+
+    public int getHp(){
+        return hp;
     }
 }

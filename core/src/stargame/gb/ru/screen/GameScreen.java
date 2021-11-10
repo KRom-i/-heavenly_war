@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
@@ -19,6 +20,7 @@ import stargame.gb.ru.poll.EnemyPool;
 import stargame.gb.ru.poll.ExplosionPool;
 import stargame.gb.ru.sprite.Background;
 import stargame.gb.ru.sprite.Bullet;
+import stargame.gb.ru.sprite.Doc;
 import stargame.gb.ru.sprite.EnemyPlane;
 import stargame.gb.ru.sprite.GameOver;
 import stargame.gb.ru.sprite.NewGameButton;
@@ -63,6 +65,9 @@ public class GameScreen extends BaseScreen {
 
     private StringBuilder sbLevel;
 
+    private Doc doc;
+    private int currentLevel;
+
     @Override
     public void show() {
         super.show();
@@ -90,7 +95,7 @@ public class GameScreen extends BaseScreen {
 
         userPlane = new UserPlane(atlas, explosionPool, bulletPool);
 
-        enemyPool = new EnemyPool(bulletPool, explosionPool, worldBounds, bulletSound, userPlane);
+        enemyPool = new EnemyPool(bulletPool, explosionPool, worldBounds, bulletSound, atlas);
 
         enemyEmitter = new EnemyEmitter(enemyPool, worldBounds, atlas);
 
@@ -103,6 +108,9 @@ public class GameScreen extends BaseScreen {
         sbFrags = new StringBuilder();
         sbHp = new StringBuilder();
         sbLevel = new StringBuilder();
+
+        doc = new Doc(atlas, worldBounds);
+        currentLevel = 1;
     }
 
     @Override
@@ -120,6 +128,7 @@ public class GameScreen extends BaseScreen {
         cloudsTopBig.update(delta);
         cloudsTopSmall.update(delta);
         explosionPool.updateActiveObjects(delta);
+        doc.update(delta);
 
         if (!userPlane.isDestroyed()){
             userPlane.update(delta);
@@ -185,6 +194,7 @@ public class GameScreen extends BaseScreen {
         cloudsTopSmall.resize(worldBounds);
         gameOver.resize(worldBounds);
         newGameButton.resize(worldBounds);
+        doc.resize(worldBounds);
     }
 
     @Override
@@ -199,6 +209,7 @@ public class GameScreen extends BaseScreen {
         atlas2.dispose();
         explosionSound.dispose();
         font.dispose();
+        doc.dispose();
     }
 
     @Override
@@ -233,6 +244,7 @@ public class GameScreen extends BaseScreen {
         cloudsBottom.draw(batch);
 
         if (!userPlane.isDestroyed()){
+            drawDoc(batch);
             bulletPool.drawActiveObjects(batch);
             enemyPool.drawActiveObjects(batch);
             userPlane.draw(batch);
@@ -243,9 +255,20 @@ public class GameScreen extends BaseScreen {
 
         explosionPool.drawActiveObjects(batch);
 //        cloudsTopBig.draw(batch);
-        cloudsTopSmall.draw(batch);
+//        cloudsTopSmall.draw(batch);
         printInfo();
         batch.end();
+    }
+
+    private void drawDoc(SpriteBatch batch) {
+        if (currentLevel < enemyEmitter.getLevel() && userPlane.getHp() < UserPlane.DEFAULT_HP){
+            doc.show();
+            currentLevel ++;
+        }
+        doc.draw(batch);
+        if (!userPlane.isOutside(doc)){
+            userPlane.addHp(doc.getHp());
+        }
     }
 
     private void printInfo(){
@@ -283,5 +306,6 @@ public class GameScreen extends BaseScreen {
         enemyPool.destroy();
         userPlane.restore();
         frags = 0;
+        currentLevel = 1;
     }
 }
