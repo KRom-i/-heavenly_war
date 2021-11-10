@@ -18,6 +18,8 @@ import stargame.gb.ru.poll.ExplosionPool;
 import stargame.gb.ru.sprite.Background;
 import stargame.gb.ru.sprite.Bullet;
 import stargame.gb.ru.sprite.EnemyPlane;
+import stargame.gb.ru.sprite.GameOver;
+import stargame.gb.ru.sprite.NewGameButton;
 import stargame.gb.ru.sprite.UserPlane;
 import stargame.gb.ru.util.EnemyEmitter;
 
@@ -41,6 +43,9 @@ public class GameScreen extends BaseScreen {
 
     private ExplosionPool explosionPool;
     private Sound explosionSound;
+
+    private GameOver gameOver;
+    private NewGameButton newGameButton;
 
     @Override
     public void show() {
@@ -72,6 +77,9 @@ public class GameScreen extends BaseScreen {
         enemyPool = new EnemyPool(bulletPool, explosionPool, worldBounds, bulletSound, userPlane);
 
         enemyEmitter = new EnemyEmitter(enemyPool, worldBounds, atlas);
+
+        newGameButton = new NewGameButton(this, atlas2);
+        gameOver = new GameOver(atlas2);
     }
 
     @Override
@@ -95,6 +103,9 @@ public class GameScreen extends BaseScreen {
             bulletPool.updateActiveObjects(delta);
             enemyPool.updateActiveObjects(delta);
             enemyEmitter.generate(delta);
+        } else {
+            gameOver.update(delta);
+            newGameButton.update(delta);
         }
 
     }
@@ -114,6 +125,9 @@ public class GameScreen extends BaseScreen {
             bulletPool.drawActiveObjects(batch);
             enemyPool.drawActiveObjects(batch);
             userPlane.draw(batch);
+        } else {
+            gameOver.draw(batch);
+            newGameButton.draw(batch);
         }
 //        cloudsTopBig.draw(batch);
 //        cloudsTopSmall.draw(batch);
@@ -162,6 +176,8 @@ public class GameScreen extends BaseScreen {
         cloudsBottom.resize(worldBounds);
         cloudsTopBig.resize(worldBounds);
         cloudsTopSmall.resize(worldBounds);
+        gameOver.resize(worldBounds);
+        newGameButton.resize(worldBounds);
     }
 
     @Override
@@ -179,12 +195,14 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
+        newGameButton.touchDown(touch, pointer, button);
         userPlane.touchDown(touch, pointer, button);
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
+        newGameButton.touchUp(touch, pointer, button);
         userPlane.touchUp(touch, pointer, button);
         return false;
     }
@@ -199,5 +217,12 @@ public class GameScreen extends BaseScreen {
     public boolean keyUp(int keycode) {
         userPlane.keyUp(keycode);
         return false;
+    }
+
+    public void newGame() {
+        bulletPool.destroy();
+        explosionPool.destroy();
+        enemyPool.destroy();
+        userPlane.restore();
     }
 }
