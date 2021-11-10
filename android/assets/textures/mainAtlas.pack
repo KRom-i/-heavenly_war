@@ -3,6 +3,18 @@ mainAtlas.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+doc
+  rotate: false
+  xy: 1, 1
+  size: 1000, 1000
+  orig: 1000, 1000
+  offset: 0, 0
+  index: -1
+
+mainAtlas2.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
 userPlane
   rotate: false
   xy: 1, 259
@@ -18,19 +30,26 @@ bullet
   offset: 0, 0
   index: -1
 
-mainAtlas2.png
+mainAtlas3.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
 userPlaneRed
   rotate: false
-  xy: 1, 1
+  xy: 1, 84
   size: 826, 682
   orig: 826, 682
   offset: 0, 0
   index: -1
+hp
+  rotate: false
+  xy: 1, 1
+  size: 1007, 81
+  orig: 1007, 81
+  offset: 0, 0
+  index: -1
 
-mainAtlas3.png
+mainAtlas4.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -49,7 +68,7 @@ enemyPlane0Red
   offset: 0, 0
   index: -1
 
-mainAtlas4.png
+mainAtlas5.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -68,7 +87,7 @@ enemyPlane2
   offset: 0, 0
   index: -1
 
-mainAtlas5.png
+mainAtlas6.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -80,7 +99,7 @@ enemyPlane1
   offset: 0, 0
   index: -1
 
-mainAtlas6.png
+mainAtlas7.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
@@ -92,7 +111,7 @@ enemyPlane1Red
   offset: 0, 0
   index: -1
 
-mainAtlas7.png
+mainAtlas8.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
