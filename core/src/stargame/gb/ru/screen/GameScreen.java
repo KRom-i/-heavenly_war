@@ -6,10 +6,12 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.List;
 
 import stargame.gb.ru.base.BaseScreen;
+import stargame.gb.ru.base.Font;
 import stargame.gb.ru.math.Rect;
 import stargame.gb.ru.poll.BulletPool;
 import stargame.gb.ru.poll.CloudPoll;
@@ -24,6 +26,12 @@ import stargame.gb.ru.sprite.UserPlane;
 import stargame.gb.ru.util.EnemyEmitter;
 
 public class GameScreen extends BaseScreen {
+
+    private static final String FRAGS = "Frags: ";
+    private static final String HP = "HP: ";
+    private static final String LEVEL = "Level: ";
+    private static final float FONT_SIZE = 0.02f;
+    private static final float MARGIN = 0.01f;
 
     private Texture textureBackground;
     private Background background;
@@ -47,6 +55,14 @@ public class GameScreen extends BaseScreen {
     private GameOver gameOver;
     private NewGameButton newGameButton;
 
+    private Font font;
+    private int frags;
+    private StringBuilder sbFrags;
+
+    private StringBuilder sbHp;
+
+    private StringBuilder sbLevel;
+
     @Override
     public void show() {
         super.show();
@@ -65,8 +81,8 @@ public class GameScreen extends BaseScreen {
         background = new Background(textureBackground);
 
         cloudsBottom = new CloudPoll(atlas, 20, 5f, -0.1f);
-        cloudsTopBig  = new CloudPoll(atlas, 5, 1.5f, -0.2f);
-        cloudsTopSmall = new CloudPoll(atlas, 5, 1.5f, -0.3f);
+        cloudsTopBig  = new CloudPoll(atlas, 2, 1.5f, -0.2f);
+        cloudsTopSmall = new CloudPoll(atlas, 3, 1.5f, -0.3f);
 
         bulletPool = new BulletPool(bulletSound);
 
@@ -80,6 +96,13 @@ public class GameScreen extends BaseScreen {
 
         newGameButton = new NewGameButton(this, atlas2);
         gameOver = new GameOver(atlas2);
+
+
+        font = new Font("font/font.fnt", "font/font.png");
+        font.setSize(FONT_SIZE);
+        sbFrags = new StringBuilder();
+        sbHp = new StringBuilder();
+        sbLevel = new StringBuilder();
     }
 
     @Override
@@ -102,7 +125,7 @@ public class GameScreen extends BaseScreen {
             userPlane.update(delta);
             bulletPool.updateActiveObjects(delta);
             enemyPool.updateActiveObjects(delta);
-            enemyEmitter.generate(delta);
+            enemyEmitter.generate(delta, frags);
         } else {
             gameOver.update(delta);
             newGameButton.update(delta);
@@ -114,25 +137,6 @@ public class GameScreen extends BaseScreen {
         bulletPool.freeAllDestroyed();
         explosionPool.freeAllDestroyed();
         enemyPool.freeAllDestroyed();
-    }
-
-    private void draw() {
-        batch.begin();
-        background.draw(batch);
-        cloudsBottom.draw(batch);
-
-        if (!userPlane.isDestroyed()){
-            bulletPool.drawActiveObjects(batch);
-            enemyPool.drawActiveObjects(batch);
-            userPlane.draw(batch);
-        } else {
-            gameOver.draw(batch);
-            newGameButton.draw(batch);
-        }
-//        cloudsTopBig.draw(batch);
-//        cloudsTopSmall.draw(batch);
-        explosionPool.drawActiveObjects(batch);
-        batch.end();
     }
 
     private void checkCollisions() {
@@ -163,6 +167,9 @@ public class GameScreen extends BaseScreen {
             for (EnemyPlane enemyPlane : enemyPlaneList) {
                 if (enemyPlane.isBulletCollision(bullet)) {
                     enemyPlane.damage(bullet.getDamage());
+                    if (enemyPlane.isDestroyed()){
+                        frags ++;
+                    }
                     bullet.destroy();
                 }
             }
@@ -191,6 +198,7 @@ public class GameScreen extends BaseScreen {
         music.dispose();
         atlas2.dispose();
         explosionSound.dispose();
+        font.dispose();
     }
 
     @Override
@@ -219,10 +227,61 @@ public class GameScreen extends BaseScreen {
         return false;
     }
 
+    private void draw() {
+        batch.begin();
+        background.draw(batch);
+        cloudsBottom.draw(batch);
+
+        if (!userPlane.isDestroyed()){
+            bulletPool.drawActiveObjects(batch);
+            enemyPool.drawActiveObjects(batch);
+            userPlane.draw(batch);
+        } else {
+            gameOver.draw(batch);
+            newGameButton.draw(batch);
+        }
+
+        explosionPool.drawActiveObjects(batch);
+//        cloudsTopBig.draw(batch);
+        cloudsTopSmall.draw(batch);
+        printInfo();
+        batch.end();
+    }
+
+    private void printInfo(){
+        sbFrags.setLength(0);
+        font.draw(
+                batch,
+                sbFrags.append(FRAGS).append(frags),
+                worldBounds.getLeft() + MARGIN,
+                worldBounds.getTop() - MARGIN,
+                Align.left
+        );
+
+        sbHp.setLength(0);
+        font.draw(
+                batch,
+                sbHp.append(HP).append(userPlane.getHp()),
+                worldBounds.pos.x,
+                worldBounds.getTop() - MARGIN,
+                Align.center
+        );
+
+        sbLevel.setLength(0);
+        font.draw(
+                batch,
+                sbLevel.append(LEVEL).append(enemyEmitter.getLevel()),
+                worldBounds.getRight() - MARGIN,
+                worldBounds.getTop() - MARGIN,
+                Align.right
+        );
+    }
+
     public void newGame() {
         bulletPool.destroy();
         explosionPool.destroy();
         enemyPool.destroy();
         userPlane.restore();
+        frags = 0;
     }
 }
